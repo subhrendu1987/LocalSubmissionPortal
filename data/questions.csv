@@ -1,6 +1,6 @@
-"question_id,","title,",question
-"C001,","Prime Number,",Write a C program to check whether a given integer is prime or not.
-"C002,","Palindrome,",Write a C program to check whether a given integer is a palindrome.
-"C003,","Array Processing,",Write a C program to find the second largest element in an array.
-"C004,","Number Conversion,",Write a C program to convert a decimal number into its binary representation.
-"C005,","Matrix Operations,",Write a C program to calculate the transpose of a given matrix.
+"question_id","title","question"
+"C001","Prime Number","Write a C program to check whether a given integer is prime or not."
+"C002","Palindrome","Write a C program to check whether a given integer is a palindrome."
+"C003","Array Processing","Write a C program to find the second largest element in an array."
+"C004","Number Conversion","Write a C program to convert a decimal number into its binary representation."
+"C005","Matrix Operations","Write a C program to calculate the transpose of a given matrix."
