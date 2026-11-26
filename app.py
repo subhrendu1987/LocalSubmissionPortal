@@ -191,17 +191,23 @@ def upload():
             body=content[len(rec["protected_block"]):]
             dbg_check("program body non-empty", bool(body.strip()), f"{len(body.strip())} non-whitespace-trimmed chars")
             if not body.strip(): raise ValueError("Program body is empty.")
-            destdir=SUBMISSIONS/skey/rec["record_id"]
+            # Latest only: one file per student, overwritten on every accepted upload
+            destdir=SUBMISSIONS/skey
             destdir.mkdir(parents=True,exist_ok=True)
-            version=len(list(destdir.glob("submission_v*.c")))+1
-            dest=destdir/f"submission_v{version}.c"
+            dest=destdir/fname
+            receipt_path=destdir/f"{Path(fname).stem}.json"
+            version=1
+            if receipt_path.exists():
+                try: version=int(json.loads(receipt_path.read_text(encoding="utf-8")).get("version",0))+1
+                except (OSError,ValueError,json.JSONDecodeError): pass
+            dbg("  %s existing submission at %s", "overwriting" if dest.exists() else "no", dest)
             dest.write_bytes(data)
-            receipt={"roll_no":norm_roll(roll),"filename":fname,"version":version,
+            receipt={"roll_no":norm_roll(roll),"record_id":rec["record_id"],"filename":fname,"version":version,
                      "uploaded_at":datetime.now(timezone.utc).isoformat(),
                      "sha256":hashlib.sha256(data).hexdigest(),"validation":"passed"}
-            (destdir/f"submission_v{version}.json").write_text(json.dumps(receipt,indent=2),encoding="utf-8")
+            receipt_path.write_text(json.dumps(receipt,indent=2),encoding="utf-8")
             dbg_table("Submission saved", {"path":str(dest), **receipt})
-            flash(f"Submission accepted. Version {version} recorded.","success")
+            flash(f"Submission accepted. Upload #{version}; your latest file replaces any earlier one.","success")
         except ValueError as e:
             dbg("Upload rejected: %s", e); flash(str(e),"error")
         except Exception:
